@@ -31,6 +31,7 @@ const (
 )
 
 type Logger interface {
+	Log(title, message, channel string) error
 	Critical(message string) error
 	Debug(message string) error
 	Error(message string) error
