@@ -95,7 +95,7 @@ func NewHandlerNS(url string) handlerNS {
 
 func (h handlerNS) Post(title, message, channel string) error {
 	log := map[string]string{
-		"origin":  "Siena",
+		"origin":  channel,
 		"title":   title,
 		"message": message,
 	}
