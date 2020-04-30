@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Handler interface {
@@ -95,6 +96,29 @@ func NewHandlerNS(url string) handlerNS {
 }
 
 func (h handlerNS) Post(title, message, channel string) error {
+	body, err := h.getBody(title, message, channel)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, h.url, bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+	httpClient := &http.Client{Timeout: 5 * time.Second}
+	res, err := httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New(fmt.Sprintf("Error log to %s. Request Status: %s", h.url, res.Status))
+	}
+	return nil
+}
+
+func (h handlerNS) getBody(title, message, channel string) ([]byte, error) {
 	log := map[string]string{
 		"origin":  channel,
 		"title":   title,
@@ -104,16 +128,5 @@ func (h handlerNS) Post(title, message, channel string) error {
 		"type": []string{"log"},
 		"log":  log,
 	}
-	contentJson, err := json.Marshal(content)
-	if err != nil {
-		return err
-	}
-	resp, err := http.Post(h.url, "application/json", bytes.NewReader(contentJson))
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("Error log to %s. Request Status: %s", h.url, resp.Status))
-	}
-	return nil
+	return json.Marshal(content)
 }

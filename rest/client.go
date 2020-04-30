@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/padmoney/common/credentials"
 )
@@ -60,7 +61,7 @@ func (c *client) Send(method, url string, body io.Reader) Response {
 		return Response{Error: err}
 	}
 	c.setHeaders(req)
-	httpClient := &http.Client{}
+	httpClient := &http.Client{Timeout: 5 * time.Second}
 	res, err := httpClient.Do(req)
 	if err != nil {
 		return Response{Error: err}
@@ -95,7 +96,7 @@ func (c client) Header(key string) string {
 }
 
 func (c *client) setAuthorization() {
-	basicToken := "Basic " + c.credentials.NewToken()
+	basicToken := "Basic " + c.credentials.Token()
 	c.AddHeader("Authorization", basicToken)
 }
 
