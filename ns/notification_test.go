@@ -22,7 +22,7 @@ func TestService_SendNotification(t *testing.T) {
 		body = string(b)
 	}
 	ts := httptest.NewServer(http.HandlerFunc(fn))
-	cr := credentials.New(ts.URL, "12345", 10)
+	cr := credentials.New(ts.URL, "padmoney", "123")
 	cl := rest.NewClient(cr)
 	ns := NewService(cl)
 	data := map[string]interface{}{
@@ -64,7 +64,7 @@ func TestService_SendNotificationGotError(t *testing.T) {
 		w.Write([]byte("Error Message"))
 	}
 	ts := httptest.NewServer(http.HandlerFunc(fn))
-	cr := credentials.New(ts.URL, "12345", 10)
+	cr := credentials.New(ts.URL, "padmoney", "1234")
 	cl := rest.NewClient(cr)
 	ns := NewService(cl)
 	data := map[string]interface{}{

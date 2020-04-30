@@ -1,23 +1,27 @@
 package credentials
 
-import "github.com/padmoney/common/token"
+import (
+	"encoding/base64"
+	"fmt"
+)
 
 type Credentials struct {
 	url  string
-	key  string
-	cost int
+	user string
+	pass string
 }
 
-func New(url, key string, cost int) Credentials {
+func New(url, user, pass string) Credentials {
 	return Credentials{
 		url:  url,
-		key:  key,
-		cost: cost,
+		user: user,
+		pass: pass,
 	}
 }
 
-func (c Credentials) NewToken() string {
-	return token.Hash(c.key, c.cost)
+func (c Credentials) Token() string {
+	up := fmt.Sprintf("%s:%s", c.user, c.pass)
+	return base64.StdEncoding.EncodeToString([]byte(up))
 }
 
 func (c Credentials) URL() string {
