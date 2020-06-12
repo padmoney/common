@@ -61,7 +61,7 @@ func (c *client) Send(method, url string, body io.Reader) Response {
 		return Response{Error: err}
 	}
 	c.setHeaders(req)
-	httpClient := &http.Client{Timeout: 5 * time.Second}
+	httpClient := &http.Client{Timeout: 15 * time.Second}
 	res, err := httpClient.Do(req)
 	if err != nil {
 		return Response{Error: err}
